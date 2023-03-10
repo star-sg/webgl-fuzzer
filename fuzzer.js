@@ -394,11 +394,15 @@ generate = function () {
     poc += (create_textures());
     // poc+=(create_transform_feedbacks());
     poc += "\n"
+    poc += "document.wait();\n"
     poc += fuzzwebgl2()
     poc += `  var primitiveType = gl.TRIANGLES;
   var offset = 0;
   var count = 3;
-  gl.drawArrays(primitiveType, offset, count);`
+  gl.drawArrays(primitiveType, offset, count);
+  gl.flush();
+    gl.finish();
+    document.finish();`
 
     return poc
 }
