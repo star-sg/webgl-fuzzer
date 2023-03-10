@@ -424,33 +424,6 @@ syncs = [];
 textures = []
 transform_feedbacks = [];
 
-// for(var i=0;i<10;i++){
-// console.log(create_array_buffers())
-// console.log(create_bindings());
-// console.log(create_buffers());
-// console.log(create_locations());
-// console.log(create_programs());
-// console.log(create_queries());
-// console.log(create_samplers());
-// console.log(create_syncs());
-// console.log(create_textures());
-// console.log(create_transform_feedbacks());
-// }
-
-// console.log(array_buffers)
-// console.log(buffers)
-// console.log(locations)
-// console.log(programs)
-// console.log(vertex_arrays)
-// console.log(bindings)
-// console.log(queries)
-// console.log(samplers)
-// console.log(syncs)
-// console.log(textures)
-// console.log(transform_feedbacks)
-// console.log(generate())
-// var tree = webidl.parse(webgl1file)
-// generate()
 const poc = `
 <script type="vertex" id="vshader">VSHADER_HERE
 </script>
@@ -465,4 +438,14 @@ ${generate()}
 </script>
 `
 
-console.log(poc)
+let nsamples = process.env.NUMBER_OF_SAMPLES;
+let in_dir = process.env.INPUT_DIRECTORY;
+
+console.log(nsamples);
+
+for (let i = 0; i < nsamples; ++i) {
+    let filename = in_dir + "/fuzz_" + i + ".html";
+    fs.writeFile(filename, poc, err => {
+        if (err) throw new Error(err);
+    });
+}
