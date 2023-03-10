@@ -1,14 +1,10 @@
-require("./libs/randoms.js")
-// webgl operations
-require("./libs/webglRenderingContextOperations.js");
-// webgl2 operations
-// require("./libs/webgl2RenderingContextOperations.js");
+require(process.env.NODEJSPATH + "/libs/randoms.js")
+require(process.env.NODEJSPATH + "/libs/webglRenderingContextOperations.js");
 
 var fs = require('fs');
-var webidl = require("./libs/webidl2.js");
+var webidl = require(process.env.NODEJSPATH + "/libs/webidl2.js");
 
-// var webgl2file = fs.readFileSync("./lib/webgl2.idl").toString()
-var webgl1file = fs.readFileSync("./libs/webgl.idl").toString()
+var webglfile = fs.readFileSync(process.env.NODEJSPATH + "/libs/webgl.idl").toString()
 
 checkIfSequence = function (arg) {
 
@@ -328,7 +324,7 @@ fuzzwebgl2 = function () {
     constants = {}
 
     var count = 0
-    var tree = webidl.parse(webgl1file)
+    var tree = webidl.parse(webglfile)
     for (var i in tree) {
         if (tree[i]['name'] == 'WebGLRenderingContextBase')
             WebGLRenderingContextBase = tree[i]
@@ -425,10 +421,21 @@ textures = []
 transform_feedbacks = [];
 
 const poc = `
-<script type="vertex" id="vshader">VSHADER_HERE
+<script type="vertex" id="vshader">
+attribute vec4 aVertexColor;
+varying highp vec4 vColor;
+void main() {
+    gl_Position = vec4(0,0,0,0);
+    gl_PointSize = 1.0;
+    vColor = aVertexColor;
+}
 </script>
 
-<script type="fragment" id="fshader">FSHADER_HERE
+<script type="fragment" id="fshader">
+varying highp vec4 vColor;
+void main() {
+    gl_FragColor = vColor;
+}
 </script>
 
 <canvas id="canvas"  style="height:100%;width: 100%" ></canvas>
@@ -441,10 +448,8 @@ ${generate()}
 let nsamples = process.env.NUMBER_OF_SAMPLES;
 let in_dir = process.env.INPUT_DIRECTORY;
 
-console.log(nsamples);
-
 for (let i = 0; i < nsamples; ++i) {
-    let filename = in_dir + "/fuzz_" + i + ".html";
+    let filename = in_dir + "/fuzz-" + i + ".html";
     fs.writeFile(filename, poc, err => {
         if (err) throw new Error(err);
     });
