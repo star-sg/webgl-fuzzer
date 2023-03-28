@@ -424,36 +424,37 @@ syncs = [];
 textures = []
 transform_feedbacks = [];
 
-const poc = `
-<script type="vertex" id="vshader">
-attribute vec4 aVertexColor;
-varying highp vec4 vColor;
-void main() {
-    gl_Position = vec4(0,0,0,0);
-    gl_PointSize = 1.0;
-    vColor = aVertexColor;
-}
-</script>
-
-<script type="fragment" id="fshader">
-varying highp vec4 vColor;
-void main() {
-    gl_FragColor = vColor;
-}
-</script>
-
-<canvas id="canvas"  style="height:100%;width: 100%" ></canvas>
-
-<script type="text/javascript">
-${generate()}
-</script>
-`
-
 let nsamples = process.env.NUMBER_OF_SAMPLES;
 let in_dir = process.env.INPUT_DIRECTORY;
 
 for (let i = 0; i < nsamples; ++i) {
     let filename = in_dir + "/fuzz-" + i + ".html";
+
+    const poc = `
+    <script type="vertex" id="vshader">
+    attribute vec4 aVertexColor;
+    varying highp vec4 vColor;
+    void main() {
+        gl_Position = vec4(0,0,0,0);
+        gl_PointSize = 1.0;
+        vColor = aVertexColor;
+    }
+    </script>
+
+    <script type="fragment" id="fshader">
+    varying highp vec4 vColor;
+    void main() {
+        gl_FragColor = vColor;
+    }
+    </script>
+
+    <canvas id="canvas"  style="height:100%;width: 100%" ></canvas>
+
+    <script type="text/javascript">
+    ${generate()}
+    </script>
+    `
+
     fs.writeFile(filename, poc, err => {
         if (err) throw new Error(err);
     });
